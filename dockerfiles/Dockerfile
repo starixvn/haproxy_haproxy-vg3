@@ -1,20 +1,15 @@
-FROM registry.nexdev.net:5050/docker/haproxy/haproxy-debian:2.4-test
+FROM hub.lumigame.com/base/haproxy/haproxy-ubuntu:2.6-ci
 ARG ENV
 RUN mkdir -p /root/.ssh/
 ADD dockerfiles/rsa /root/.ssh/
 RUN chmod -R 600 /root/.ssh/
 RUN ssh-keyscan -t rsa git3.nexdev.net >> /root/.ssh/known_hosts
-#RUN ls -l /root/.ssh/
-#RUN cat /root/.ssh/id_rsa
-#RUN ls -l /srv/
 RUN cd /srv/ && git clone git@git3.nexdev.net:haproxy/haproxy-default.git
 RUN cd /srv/ && git clone git@git3.nexdev.net:haproxy/haproxy-sc1.git
 RUN cd /srv/ && git clone git@git3.nexdev.net:haproxy/haproxy-vg2.git
 #RUN cd /srv/haproxy-default && git fetch
 #############
 COPY configs/$ENV /usr/local/etc/haproxy/configs/$ENV
-#RUN ls -l /srv/haproxy-default/configs
-#RUN ls -l /srv/haproxy-default/configs/$ENV/
 RUN cp /srv/haproxy-default/configs/$ENV/*.cfg /usr/local/etc/haproxy/configs/$ENV/
 RUN cp /srv/haproxy-sc1/configs/$ENV/*.cfg /usr/local/etc/haproxy/configs/$ENV/
 RUN cp /srv/haproxy-sc1/configs/$ENV/maps/*.map /usr/local/etc/haproxy/configs/$ENV/maps/
@@ -30,6 +25,3 @@ RUN cat /usr/local/etc/haproxy/configs/$ENV/maps/*.map > /usr/local/etc/haproxy/
 RUN if [ -e /usr/local/etc/haproxy/configs/$ENV/special-maps ] ; then cp /usr/local/etc/haproxy/configs/$ENV/special-maps/* /usr/local/etc/haproxy/maps/ ; fi ;
 RUN if [ -e /srv/haproxy-sc1/configs/$ENV/special-maps ] ; then cp /srv/haproxy-sc1/configs/$ENV/special-maps/* /usr/local/etc/haproxy/maps/ ; fi ;
 RUN if [ -e /srv/haproxy-vg2/configs/$ENV/special-maps ] ; then cp /srv/haproxy-vg2/configs/$ENV/special-maps/* /usr/local/etc/haproxy/maps/ ; fi ;
-#RUN ls -l /usr/local/etc/haproxy/maps/
-#RUN cat /usr/local/etc/haproxy/haproxy.cfg
-#RUN cat /etc/haproxy/maps/hosts.map
